@@ -1,7 +1,7 @@
-﻿namespace System
+﻿namespace Albelli.OpenTelemetry
 {
-    public class CorrelationKeys
+    public static class CorrelationKeys
     {
-        
+        public const string CorrelationId = @"X-CorrelationId";
     }
 }
