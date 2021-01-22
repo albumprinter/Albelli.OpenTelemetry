@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{236C0B9D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Albelli.OpenTelemetry.Core", "src\Albelli.OpenTelemetry.Core\Albelli.OpenTelemetry.Core.csproj", "{936BAB0C-55B9-4466-8D24-BCEE4A20DC4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albelli.OpenTelemetry.SNS", "src\Albelli.OpenTelemetry.SNS\Albelli.OpenTelemetry.SNS.csproj", "{AACBE97D-2C23-4441-899E-1E84549DC0F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albelli.OpenTelemetry.Lambda.SNSEvents", "src\Albelli.OpenTelemetry.Lambda.SNSEvents\Albelli.OpenTelemetry.Lambda.SNSEvents.csproj", "{6D3FFEA1-27C3-4F2D-920D-616255C2D283}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,11 +35,21 @@ Global
 		{936BAB0C-55B9-4466-8D24-BCEE4A20DC4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{936BAB0C-55B9-4466-8D24-BCEE4A20DC4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{936BAB0C-55B9-4466-8D24-BCEE4A20DC4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AACBE97D-2C23-4441-899E-1E84549DC0F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AACBE97D-2C23-4441-899E-1E84549DC0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AACBE97D-2C23-4441-899E-1E84549DC0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AACBE97D-2C23-4441-899E-1E84549DC0F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D3FFEA1-27C3-4F2D-920D-616255C2D283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D3FFEA1-27C3-4F2D-920D-616255C2D283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D3FFEA1-27C3-4F2D-920D-616255C2D283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D3FFEA1-27C3-4F2D-920D-616255C2D283}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{936BAB0C-55B9-4466-8D24-BCEE4A20DC4F} = {A307D891-AF6E-4382-978E-37CA131D221F}
+		{AACBE97D-2C23-4441-899E-1E84549DC0F6} = {A307D891-AF6E-4382-978E-37CA131D221F}
+		{6D3FFEA1-27C3-4F2D-920D-616255C2D283} = {A307D891-AF6E-4382-978E-37CA131D221F}
 	EndGlobalSection
 EndGlobal

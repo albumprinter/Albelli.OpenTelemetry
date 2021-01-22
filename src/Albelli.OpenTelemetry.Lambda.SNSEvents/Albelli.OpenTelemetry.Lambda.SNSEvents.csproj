@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Albelli.OpenTelemetry.Core</AssemblyName>
-    <RootNamespace>Albelli.OpenTelemetry.Core</RootNamespace>
+    <AssemblyName>Albelli.OpenTelemetry.Lambda.SNSEvents</AssemblyName>
+    <RootNamespace>Albelli.OpenTelemetry.Lambda.SNSEvents</RootNamespace>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
