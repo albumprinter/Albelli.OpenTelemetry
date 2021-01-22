@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Albelli.OpenTelemetry.SNS</AssemblyName>
-    <RootNamespace>Albelli.OpenTelemetry.SNS</RootNamespace>
+    <AssemblyName>Albelli.OpenTelemetry.SQS</AssemblyName>
+    <RootNamespace>Albelli.OpenTelemetry.SQS</RootNamespace>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
