@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albelli.OpenTelemetry.Loggi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albelli.OpenTelemetry.SQS", "src\Albelli.OpenTelemetry.SQS\Albelli.OpenTelemetry.SQS.csproj", "{F27C690C-BAEF-4D64-AB7A-5CEFA9D56910}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albelli.OpenTelemetry.HttpClient", "src\Albelli.OpenTelemetry.HttpClient\Albelli.OpenTelemetry.HttpClient.csproj", "{1516E662-FB03-4F94-81CC-DA3D3D92B33D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{F27C690C-BAEF-4D64-AB7A-5CEFA9D56910}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F27C690C-BAEF-4D64-AB7A-5CEFA9D56910}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F27C690C-BAEF-4D64-AB7A-5CEFA9D56910}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1516E662-FB03-4F94-81CC-DA3D3D92B33D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1516E662-FB03-4F94-81CC-DA3D3D92B33D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1516E662-FB03-4F94-81CC-DA3D3D92B33D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1516E662-FB03-4F94-81CC-DA3D3D92B33D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,5 +85,6 @@ Global
 		{CBEDE08A-601D-44B4-96F5-0D0C2451983C} = {A307D891-AF6E-4382-978E-37CA131D221F}
 		{DE538C57-3B71-4CA2-B006-AE52E6BF41E1} = {A307D891-AF6E-4382-978E-37CA131D221F}
 		{F27C690C-BAEF-4D64-AB7A-5CEFA9D56910} = {A307D891-AF6E-4382-978E-37CA131D221F}
+		{1516E662-FB03-4F94-81CC-DA3D3D92B33D} = {A307D891-AF6E-4382-978E-37CA131D221F}
 	EndGlobalSection
 EndGlobal

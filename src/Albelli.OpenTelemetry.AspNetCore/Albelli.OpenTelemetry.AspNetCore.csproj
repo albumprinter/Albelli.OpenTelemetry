@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Albelli.OpenTelemetry.Core\Albelli.OpenTelemetry.Core.csproj" />
+    <ProjectReference Include="..\Albelli.OpenTelemetry.Logging\Albelli.OpenTelemetry.Logging.csproj" />
   </ItemGroup>
   
 </Project>

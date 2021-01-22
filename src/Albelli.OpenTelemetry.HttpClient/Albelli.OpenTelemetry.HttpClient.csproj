@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Albelli.OpenTelemetry.Logging</AssemblyName>
-    <RootNamespace>Albelli.OpenTelemetry.Logging</RootNamespace>
+    <AssemblyName>Albelli.OpenTelemetry.HttpClient</AssemblyName>
+    <RootNamespace>Albelli.OpenTelemetry.HttpClient</RootNamespace>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -28,7 +28,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="3.1.11" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Albelli.OpenTelemetry.Core\Albelli.OpenTelemetry.Core.csproj" />
   </ItemGroup>
 
 </Project>
