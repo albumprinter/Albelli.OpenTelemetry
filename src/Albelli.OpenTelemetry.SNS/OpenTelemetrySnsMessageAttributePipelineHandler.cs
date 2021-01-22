@@ -32,8 +32,8 @@ namespace Albelli.OpenTelemetry.SNS
 
             var activity = Activity.Current;
 
-            request.TrySetAttribute(OpenTelemetryKeys.TraceParent, activity?.Id);
-            request.TrySetAttribute(OpenTelemetryKeys.TraceState, activity?.TraceStateString);
+            request.TryAdd(OpenTelemetryKeys.TraceParent, activity?.Id);
+            request.TryAdd(OpenTelemetryKeys.TraceState, activity?.TraceStateString);
         }
     }
 }

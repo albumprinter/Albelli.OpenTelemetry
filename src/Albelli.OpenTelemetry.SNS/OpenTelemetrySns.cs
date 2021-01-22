@@ -13,7 +13,7 @@ namespace Albelli.OpenTelemetry.SNS
             RuntimePipelineCustomizerRegistry.Instance.Register(new OpenTelemetrySnsPipelineCustomizer());
         }
 
-        internal static void TrySetHeader(this IRequest request, string key, string value)
+        internal static void TryAdd(this IRequest request, string key, string value)
         {
             if (request == null || string.IsNullOrWhiteSpace(value))
             {
@@ -23,7 +23,7 @@ namespace Albelli.OpenTelemetry.SNS
             request.Headers[key] = value;
         }
 
-        internal static void TrySetAttribute(this PublishRequest request, string key, string value)
+        internal static void TryAdd(this PublishRequest request, string key, string value)
         {
             if (request == null || string.IsNullOrWhiteSpace(value))
             {
