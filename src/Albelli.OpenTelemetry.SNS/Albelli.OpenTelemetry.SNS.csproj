@@ -26,6 +26,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.148" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Albelli.OpenTelemetry.Core\Albelli.OpenTelemetry.Core.csproj" />
   </ItemGroup>
 
 </Project>
