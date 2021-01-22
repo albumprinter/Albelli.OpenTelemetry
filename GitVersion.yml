@@ -1,0 +1,18 @@
+assembly-informational-format: '{NuGetVersion}'
+mode: ContinuousDeployment
+branches:
+  master:
+    tag: b
+    increment: Minor
+  features?[/-]:
+    tag: a-{BranchName}
+    increment: Minor
+  (pull|pull\-requests|pr)[/-]:
+    tag: a-pr-{BranchName}
+    increment: Inherit
+  hotfix(es)?[/-]:
+    tag: rc
+    increment: Patch
+  support[/-]:
+    tag: s
+    increment: Patch
