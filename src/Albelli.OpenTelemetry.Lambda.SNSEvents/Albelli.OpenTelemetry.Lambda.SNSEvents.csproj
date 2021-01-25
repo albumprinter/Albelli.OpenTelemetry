@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>Albelli.OpenTelemetry.Lambda.SNSEvents</AssemblyName>
     <RootNamespace>Albelli.OpenTelemetry.Lambda.SNSEvents</RootNamespace>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Albelli.Lambda.Templates.Sns" Version="0.1.0-b0003" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -26,6 +27,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="OpenTelemetry" Version="1.0.0-rc1.1" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Albelli.OpenTelemetry.Core\Albelli.OpenTelemetry.Core.csproj" />
   </ItemGroup>
   
 </Project>
