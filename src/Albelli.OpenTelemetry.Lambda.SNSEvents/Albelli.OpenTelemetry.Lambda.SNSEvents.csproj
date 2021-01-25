@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Albelli.Lambda.Templates.Sns" Version="0.1.0-b0003" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -27,8 +26,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OpenTelemetry" Version="1.0.0-rc1.1" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
+    <PackageReference Include="Amazon.Lambda.SNSEvents" Version="[1.1.0,2)" />
   </ItemGroup>
 
   <ItemGroup>
