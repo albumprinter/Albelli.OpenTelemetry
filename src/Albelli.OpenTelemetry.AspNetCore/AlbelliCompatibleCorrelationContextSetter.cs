@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Albelli.OpenTelemetry.Core;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 

@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 
 namespace Albelli.OpenTelemetry.Lambda.SQSEvents
 {
+    [PublicAPI]
     public class SqsActivityProvider
     {
         public static readonly ActivitySource Source = new ActivitySource("Albelli.OpenTelemetry.SQS");

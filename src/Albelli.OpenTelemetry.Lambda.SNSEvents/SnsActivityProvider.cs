@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 
 namespace Albelli.OpenTelemetry.Lambda.SNSEvents
 {
+    [PublicAPI]
     public class SnsActivityProvider
     {
         public static readonly ActivitySource Source = new ActivitySource("Albelli.OpenTelemetry.SNS");
