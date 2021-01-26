@@ -17,7 +17,7 @@ namespace Albelli.OpenTelemetry.SQS
         public override async Task<T> InvokeAsync<T>(IExecutionContext executionContext)
         {
             AddTracingDataIfAbsent(executionContext.RequestContext);
-            var result = await base.InvokeAsync<T>(executionContext);
+            var result = await base.InvokeAsync<T>(executionContext).ConfigureAwait(false);
             return result;
         }
 
