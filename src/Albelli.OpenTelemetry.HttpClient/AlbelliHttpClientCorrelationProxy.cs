@@ -10,17 +10,17 @@ namespace Albelli.OpenTelemetry.HttpClient
     /// <summary>
     /// Diagnostic listener for backward compatibility with the old correlation id format.
     /// Usage:
-    /// DiagnosticListener.AllListeners.Subscribe(new CompatibleCorrelationHttpRequestDiagnosticListener());
+    /// DiagnosticListener.AllListeners.Subscribe(new AlbelliHttpClientCorrelationProxy());
     /// </summary>
     [PublicAPI]
-    public class CompatibleCorrelationHttpRequestDiagnosticListener : IObserver<DiagnosticListener>, IObserver<KeyValuePair<string, object>>
+    public class AlbelliHttpClientCorrelationProxy : IObserver<DiagnosticListener>, IObserver<KeyValuePair<string, object>>
     {
         private const string HttpRequestOutEvent = "System.Net.Http.HttpRequestOut";
         private const string HttpRequestOutStartEvent = "System.Net.Http.HttpRequestOut.Start";
         private const string DiagnosticListenerName = "HttpHandlerDiagnosticListener";
         private readonly List<IDisposable> _subscriptions;
 
-        public CompatibleCorrelationHttpRequestDiagnosticListener()
+        public AlbelliHttpClientCorrelationProxy()
         {
             _subscriptions = new List<IDisposable>();
         }

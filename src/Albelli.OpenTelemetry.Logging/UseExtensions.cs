@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Albelli.OpenTelemetry.Logging;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Albelli.OpenTelemetry.AspNetCore
+namespace Albelli.OpenTelemetry.Logging
 {
     [PublicAPI]
     public static class UseExtensions

@@ -7,15 +7,20 @@ using Microsoft.AspNetCore.Http;
 
 namespace Albelli.OpenTelemetry.AspNetCore
 {
+    /// <summary>
+    /// Diagnostic listener for backward compatibility with the old correlation id format.
+    /// Usage:
+    /// DiagnosticListener.AllListeners.Subscribe(new AlbelliAspNetCoreCorrelationProxy());
+    /// </summary>
     [PublicAPI]
-    public sealed class AlbelliCompatibleCorrelationContextSetter : IObserver<KeyValuePair<string, object>>, IObserver<DiagnosticListener>
+    public sealed class AlbelliAspNetCoreCorrelationProxy : IObserver<KeyValuePair<string, object>>, IObserver<DiagnosticListener>
     {
         private const string DiagnosticListenerName = "Microsoft.AspNetCore";
         private const string HttpRequestInStart = "Microsoft.AspNetCore.Hosting.HttpRequestIn.Start";
         private readonly ActivitySpanId EMPTY_SPAN = ActivitySpanId.CreateFromString("ffffffffffffffff".AsSpan());
         private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 
-        public AlbelliCompatibleCorrelationContextSetter()
+        public AlbelliAspNetCoreCorrelationProxy()
         {
             // We want to use the W3C format so we can be compatible with the standard as much as possible.
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
