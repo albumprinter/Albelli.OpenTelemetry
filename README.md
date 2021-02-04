@@ -6,7 +6,7 @@
 [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Albelli.OpenTelemetry.Core.svg)](https://www.nuget.org/packages/Albelli.OpenTelemetry.Core/)
 
 
-This solution contains bunch of libraries aimed to help with OpenTelemetry interaction between AWS Lambdas
+This solution contains a bunch of libraries aimed to help with OpenTelemetry interaction between AWS Lambdas and other services.
 
 # How to use
 
