@@ -15,9 +15,15 @@ namespace Albelli.OpenTelemetry.Lambda.SQSEvents
         {
             var traceParent = message.ExtractStringAttribute(OpenTelemetryKeys.TraceParent);
             var traceState = message.ExtractStringAttribute(OpenTelemetryKeys.TraceState);
-            var parentContext = ActivityContext.Parse(traceParent, traceState);
+            var parentContext =
+                string.IsNullOrWhiteSpace(traceParent)
+                    ? (ActivityContext?)null
+                    : ActivityContext.Parse(traceParent, traceState);
 
-            var activity = Source.StartActivity("SqsRequest", ActivityKind.Consumer, parentContext);
+            var activity =
+                parentContext.HasValue
+                    ? Source.StartActivity("SqsRequest", ActivityKind.Consumer, parentContext.Value)
+                    : Source.StartActivity("SqsRequest", ActivityKind.Consumer);
 
             activity?.AddTag("sqs.event.source", message.EventSource);
             activity?.AddTag("sqs.event.source.arn", message.EventSourceArn);
