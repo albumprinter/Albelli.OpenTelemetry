@@ -15,9 +15,15 @@ namespace Albelli.OpenTelemetry.Lambda.SNSEvents
         {
             var traceParent = record.Sns.ExtractAttribute(OpenTelemetryKeys.TraceParent);
             var traceState = record.Sns.ExtractAttribute(OpenTelemetryKeys.TraceState);
-            var parentContext = ActivityContext.Parse(traceParent, traceState);
+            var parentContext =
+                string.IsNullOrWhiteSpace(traceParent)
+                ? (ActivityContext?)null
+                : ActivityContext.Parse(traceParent, traceState);
 
-            var activity = Source.StartActivity("SnsRequest", ActivityKind.Consumer, parentContext);
+            var activity =
+                parentContext.HasValue
+                ? Source.StartActivity("SnsRequest", ActivityKind.Consumer, parentContext.Value)
+                : Source.StartActivity("SnsRequest", ActivityKind.Consumer);
 
             activity?.AddTag("sns.event.source", record.EventSource);
             activity?.AddTag("sns.event.version", record.EventVersion);
