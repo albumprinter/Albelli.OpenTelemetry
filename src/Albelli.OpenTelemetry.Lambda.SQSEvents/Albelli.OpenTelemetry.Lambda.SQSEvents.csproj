@@ -28,6 +28,7 @@
     </PackageReference>
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.1" />
     <PackageReference Include="Amazon.Lambda.SQSEvents" Version="[1.1.0,2)" />
+    <PackageReference Include="OpenTelemetry" Version="1.1.0-beta1" />
   </ItemGroup>
 
   <ItemGroup>
