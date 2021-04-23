@@ -44,10 +44,10 @@ namespace Albelli.OpenTelemetry.SNS
             var activityName = $"{executionContext.RequestContext.RequestName} send";
             var activity = OpenTelemetrySns.Source.StartActivity(activityName, ActivityKind.Producer);
 
-            var contextToInject = activity.SafeGetContext();
+            var activityContext = activity.SafeGetContext();
 
             request.MessageAttributes ??= new Dictionary<string, MessageAttributeValue>();
-            _propagator.Inject(new PropagationContext(contextToInject, Baggage.Current), request.MessageAttributes, InjectTraceContext);
+            _propagator.Inject(new PropagationContext(activityContext, Baggage.Current), request.MessageAttributes, InjectTraceContext);
 
             AddMessagingTags(activity);
             return activity;
