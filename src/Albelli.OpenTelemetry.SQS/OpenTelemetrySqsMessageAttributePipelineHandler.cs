@@ -6,7 +6,6 @@ using Amazon.Runtime;
 using Amazon.Runtime.Internal;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using JetBrains.Annotations;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 
@@ -44,8 +43,12 @@ namespace Albelli.OpenTelemetry.SQS
             }
 
             // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#span-name
-            var activityName = $"{executionContext.RequestContext.RequestName} send";
+            const string activityName = "SQS send";
             var activity = OpenTelemetrySqs.Source.StartActivity(activityName, ActivityKind.Producer);
+
+            // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
+            activity?.SetTag("messaging.system", "AmazonSQS");
+            activity?.SetTag("messaging.destination_kind", "queue");
 
             var activityContext = activity.SafeGetContext();
             var propagationContext = new PropagationContext(activityContext, Baggage.Current);
@@ -72,7 +75,6 @@ namespace Albelli.OpenTelemetry.SQS
                     break;
             }
 
-            AddMessagingTags(activity);
             return activity;
         }
 
@@ -105,13 +107,6 @@ namespace Albelli.OpenTelemetry.SQS
                     StringValue = value
                 };
             }
-        }
-
-        private static void AddMessagingTags([CanBeNull] Activity activity)
-        {
-            // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
-            activity?.SetTag("messaging.system", "AmazonSQS");
-            activity?.SetTag("messaging.destination_kind", "queue");
         }
     }
 }

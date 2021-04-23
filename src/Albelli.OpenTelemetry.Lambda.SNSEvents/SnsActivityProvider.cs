@@ -32,7 +32,7 @@ namespace Albelli.OpenTelemetry.Lambda.SNSEvents
             Baggage.Current = parentContext.Baggage;
 
             // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#span-name
-            var activityName = $"{record.Sns.Type} receive";
+            const string activityName = "SNS receive";
             var activity = Source.StartActivity(activityName, ActivityKind.Consumer, parentContext.ActivityContext);
 
             activity?.AddTag("messaging.sns.event.source", record.EventSource);

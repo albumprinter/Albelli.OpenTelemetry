@@ -5,7 +5,6 @@ using Albelli.OpenTelemetry.Core;
 using Amazon.Runtime;
 using Amazon.Runtime.Internal;
 using Amazon.SimpleNotificationService.Model;
-using JetBrains.Annotations;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 
@@ -42,15 +41,18 @@ namespace Albelli.OpenTelemetry.SNS
             }
 
             // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#span-name
-            var activityName = $"{executionContext.RequestContext.RequestName} send";
+            const string activityName = "SNS send";
             var activity = OpenTelemetrySns.Source.StartActivity(activityName, ActivityKind.Producer);
+
+            // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
+            activity?.SetTag("messaging.system", "AmazonSNS");
+            activity?.SetTag("messaging.destination_kind", "queue");
 
             var activityContext = activity.SafeGetContext();
 
             request.MessageAttributes ??= new Dictionary<string, MessageAttributeValue>();
             _propagator.Inject(new PropagationContext(activityContext, Baggage.Current), request.MessageAttributes, InjectTraceContext);
 
-            AddMessagingTags(activity);
             return activity;
         }
 
@@ -66,13 +68,6 @@ namespace Albelli.OpenTelemetry.SNS
                 DataType = "String",
                 StringValue = value
             };
-        }
-
-        private static void AddMessagingTags([CanBeNull] Activity activity)
-        {
-            // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
-            activity?.SetTag("messaging.system", "AmazonSNS");
-            activity?.SetTag("messaging.destination_kind", "queue");
         }
     }
 }
