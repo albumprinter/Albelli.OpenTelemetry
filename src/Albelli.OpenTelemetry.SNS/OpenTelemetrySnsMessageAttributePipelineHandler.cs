@@ -22,18 +22,19 @@ namespace Albelli.OpenTelemetry.SNS
 
         public override void InvokeSync(IExecutionContext executionContext)
         {
-            using var activity = ApplyOpenTelemetry(executionContext, executionContext.RequestContext.OriginalRequest);
+            using var activity = ApplyOpenTelemetry(executionContext);
             base.InvokeSync(executionContext);
         }
 
         public override async Task<T> InvokeAsync<T>(IExecutionContext executionContext)
         {
-            using var activity = ApplyOpenTelemetry(executionContext, executionContext.RequestContext.OriginalRequest);
+            using var activity = ApplyOpenTelemetry(executionContext);
             return await base.InvokeAsync<T>(executionContext).ConfigureAwait(false);
         }
 
-        private Activity ApplyOpenTelemetry(IExecutionContext executionContext, AmazonWebServiceRequest awsRequest)
+        private Activity ApplyOpenTelemetry(IExecutionContext executionContext)
         {
+            var awsRequest = executionContext?.RequestContext?.OriginalRequest;
             //that piece of code works only *before* Marshaller
             if (!(awsRequest is PublishRequest request))
             {
