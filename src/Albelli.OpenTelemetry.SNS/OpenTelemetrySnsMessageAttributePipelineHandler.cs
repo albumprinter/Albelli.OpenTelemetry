@@ -55,7 +55,7 @@ namespace Albelli.OpenTelemetry.SNS
 
         private static void InjectTraceContext(Dictionary<string, MessageAttributeValue> messageAttributes, string key, string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value))
             {
                 return;
             }
