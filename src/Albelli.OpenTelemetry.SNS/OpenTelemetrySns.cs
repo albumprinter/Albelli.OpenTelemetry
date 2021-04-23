@@ -13,7 +13,7 @@ namespace Albelli.OpenTelemetry.SNS
 
         public static void ConfigureAwsOutgoingRequests(TextMapPropagator propagator = null)
         {
-            //call to init Sdk static ctor
+            //call to init Sdk static ctor to initialize Propagators.DefaultTextMapPropagator properly
             var _ = Sdk.SuppressInstrumentation;
             propagator ??= Propagators.DefaultTextMapPropagator;
 
