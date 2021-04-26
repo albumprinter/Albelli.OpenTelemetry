@@ -1,56 +1,111 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Albelli.OpenTelemetry.Core;
 using Amazon.Runtime;
 using Amazon.Runtime.Internal;
+using Amazon.SQS;
 using Amazon.SQS.Model;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 
 namespace Albelli.OpenTelemetry.SQS
 {
     public class OpenTelemetrySqsMessageAttributePipelineHandler : PipelineHandler
     {
+        private readonly TextMapPropagator _propagator;
+
+        public OpenTelemetrySqsMessageAttributePipelineHandler(TextMapPropagator propagator)
+        {
+            _propagator = propagator;
+        }
+
         public override void InvokeSync(IExecutionContext executionContext)
         {
-            AddTracingDataIfAbsent(executionContext.RequestContext);
+            using var activity = ApplyOpenTelemetry(executionContext);
             base.InvokeSync(executionContext);
         }
 
         public override async Task<T> InvokeAsync<T>(IExecutionContext executionContext)
         {
-            AddTracingDataIfAbsent(executionContext.RequestContext);
+            using var activity = ApplyOpenTelemetry(executionContext);
             var result = await base.InvokeAsync<T>(executionContext).ConfigureAwait(false);
             return result;
         }
 
-        private static void AddTracingDataIfAbsent(IRequestContext requestContext)
+        private Activity ApplyOpenTelemetry(IExecutionContext executionContext)
         {
+            var request = executionContext?.RequestContext?.OriginalRequest;
             //that piece of code works only *before* Marshaller
-            if (!(requestContext.OriginalRequest is Amazon.SQS.AmazonSQSRequest))
+            if (!(request is AmazonSQSRequest))
             {
-                return;
+                return null;
             }
 
-            var currentActivity = Activity.Current;
-            switch (requestContext.OriginalRequest)
+            // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#span-name
+            const string activityName = "SQS send";
+            var activity = OpenTelemetrySqs.Source.StartActivity(activityName, ActivityKind.Producer);
+
+            // https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/semantic_conventions/messaging.md#messaging-attributes
+            activity?.SetTag("messaging.system", "AmazonSQS");
+            activity?.SetTag("messaging.destination_kind", "queue");
+
+            var activityContext = activity.SafeGetContext();
+            var propagationContext = new PropagationContext(activityContext, Baggage.Current);
+
+            switch (request)
             {
                 case ReceiveMessageRequest receiveMessageRequest:
-                    receiveMessageRequest.TryAdd(OpenTelemetryKeys.TraceParent);
-                    receiveMessageRequest.TryAdd(OpenTelemetryKeys.TraceState);
+                    receiveMessageRequest.MessageAttributeNames ??= new List<string>();
+                    _propagator.Inject(propagationContext, receiveMessageRequest.MessageAttributeNames, InjectToMessageAttributeNames);
 
                     break;
                 case SendMessageRequest sendMessageRequest:
-                    sendMessageRequest.TryAdd(OpenTelemetryKeys.TraceParent, currentActivity?.TraceId.ToHexString());
-                    sendMessageRequest.TryAdd(OpenTelemetryKeys.TraceState, currentActivity?.TraceStateString);
+                    sendMessageRequest.MessageAttributes ??= new Dictionary<string, MessageAttributeValue>();
+                    _propagator.Inject(propagationContext, sendMessageRequest.MessageAttributes, InjectToMessageAttributes);
 
                     break;
                 case SendMessageBatchRequest sendMessageBatchRequest:
                     foreach (var sendMessageBatchRequestEntry in sendMessageBatchRequest.Entries)
                     {
-                        sendMessageBatchRequestEntry.TryAdd(OpenTelemetryKeys.TraceParent, currentActivity?.TraceId.ToHexString());
-                        sendMessageBatchRequestEntry.TryAdd(OpenTelemetryKeys.TraceState, currentActivity?.TraceStateString);
+                        sendMessageBatchRequestEntry.MessageAttributes ??= new Dictionary<string, MessageAttributeValue>();
+                        _propagator.Inject(propagationContext, sendMessageBatchRequestEntry.MessageAttributes, InjectToMessageAttributes);
                     }
 
                     break;
+            }
+
+            return activity;
+        }
+
+        private static void InjectToMessageAttributeNames(List<string> messageAttributeNames, string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
+
+            if (!messageAttributeNames.Contains(key) &&
+                !messageAttributeNames.Contains("All"))
+            {
+                messageAttributeNames.Add(key);
+            }
+        }
+
+        private static void InjectToMessageAttributes(Dictionary<string, MessageAttributeValue> messageAttributes, string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
+
+            if (!messageAttributes.ContainsKey(key))
+            {
+                messageAttributes[key] = new MessageAttributeValue
+                {
+                    DataType = "String",
+                    StringValue = value
+                };
             }
         }
     }

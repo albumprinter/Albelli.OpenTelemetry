@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Linq;
 using Amazon.Runtime.Internal;
+using OpenTelemetry.Context.Propagation;
 
 namespace Albelli.OpenTelemetry.SQS
 {
     public class OpenTelemetrySqsPipelineCustomizer : IRuntimePipelineCustomizer
     {
+        private readonly TextMapPropagator _propagator;
+
+        public OpenTelemetrySqsPipelineCustomizer(TextMapPropagator propagator)
+        {
+            _propagator = propagator;
+        }
+
         public void Customize(Type type, RuntimePipeline pipeline)
         {
             var handlers = pipeline.Handlers;
@@ -15,8 +23,8 @@ namespace Albelli.OpenTelemetry.SQS
             }
 
             //Marshaller handler populates IRequestContext.Request
-            pipeline.AddHandlerAfter<Marshaller>(new OpenTelemetrySqsHttpRequestPipelineHandler());
-            pipeline.AddHandler(new OpenTelemetrySqsMessageAttributePipelineHandler());
+            pipeline.AddHandlerAfter<Marshaller>(new OpenTelemetrySqsHttpRequestPipelineHandler(_propagator));
+            pipeline.AddHandler(new OpenTelemetrySqsMessageAttributePipelineHandler(_propagator));
         }
 
         public string UniqueName => nameof(OpenTelemetrySqsPipelineCustomizer);

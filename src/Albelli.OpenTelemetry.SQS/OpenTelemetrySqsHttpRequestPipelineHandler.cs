@@ -1,30 +1,40 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Albelli.OpenTelemetry.Core;
 using Amazon.Runtime;
 using Amazon.Runtime.Internal;
+using Amazon.SQS;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 
 namespace Albelli.OpenTelemetry.SQS
 {
     public class OpenTelemetrySqsHttpRequestPipelineHandler : PipelineHandler
     {
+        private readonly TextMapPropagator _propagator;
+
+        public OpenTelemetrySqsHttpRequestPipelineHandler(TextMapPropagator propagator)
+        {
+            _propagator = propagator;
+        }
+
         public override void InvokeSync(IExecutionContext executionContext)
         {
-            AddTracingDataIfAbsent(executionContext.RequestContext);
+            ApplyOpenTelemetry(executionContext.RequestContext);
             base.InvokeSync(executionContext);
         }
 
         public override async Task<T> InvokeAsync<T>(IExecutionContext executionContext)
         {
-            AddTracingDataIfAbsent(executionContext.RequestContext);
-            var result = await base.InvokeAsync<T>(executionContext).ConfigureAwait(false);
-            return result;
+            ApplyOpenTelemetry(executionContext.RequestContext);
+            return await base.InvokeAsync<T>(executionContext).ConfigureAwait(false);
         }
 
-        private static void AddTracingDataIfAbsent(IRequestContext requestContext)
+        private void ApplyOpenTelemetry(IRequestContext requestContext)
         {
             //that piece of code works only *after* Marshaller
-            if (!(requestContext?.OriginalRequest is Amazon.SQS.AmazonSQSRequest))
+            if (!(requestContext?.OriginalRequest is AmazonSQSRequest))
             {
                 return;
             }
@@ -32,8 +42,18 @@ namespace Albelli.OpenTelemetry.SQS
             var request = requestContext.Request;
             var activity = Activity.Current;
 
-            request.TryAdd(OpenTelemetryKeys.TraceParent, activity?.Id);
-            request.TryAdd(OpenTelemetryKeys.TraceState, activity?.TraceStateString);
+            var activityContext = activity.SafeGetContext();
+            _propagator.Inject(new PropagationContext(activityContext, Baggage.Current), request.Headers, InjectTraceContext);
+        }
+
+        private static void InjectTraceContext(IDictionary<string, string> headers, string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
+
+            headers[key] = value;
         }
     }
 }

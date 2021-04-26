@@ -1,41 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System.Diagnostics;
 using Amazon.Runtime.Internal;
-using Amazon.SimpleNotificationService.Model;
 using JetBrains.Annotations;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 
 namespace Albelli.OpenTelemetry.SNS
 {
     [PublicAPI]
     public static class OpenTelemetrySns
     {
-        public static void ConfigureAwsOutgoingRequests()
+        public static readonly ActivitySource Source = new ActivitySource("Albelli.OpenTelemetry.SNS");
+
+        public static void ConfigureAwsOutgoingRequests(TextMapPropagator propagator = null)
         {
-            RuntimePipelineCustomizerRegistry.Instance.Register(new OpenTelemetrySnsPipelineCustomizer());
-        }
+            //call to init Sdk static ctor to initialize Propagators.DefaultTextMapPropagator properly
+            var _ = Sdk.SuppressInstrumentation;
+            propagator ??= Propagators.DefaultTextMapPropagator;
 
-        internal static void TryAdd(this IRequest request, string key, string value)
-        {
-            if (request == null || string.IsNullOrWhiteSpace(value))
-            {
-                return;
-            }
-
-            request.Headers[key] = value;
-        }
-
-        internal static void TryAdd(this PublishRequest request, string key, string value)
-        {
-            if (request == null || string.IsNullOrWhiteSpace(value))
-            {
-                return;
-            }
-
-            request.MessageAttributes ??= new Dictionary<string, MessageAttributeValue>();
-            request.MessageAttributes[key] = new MessageAttributeValue
-            {
-                DataType = "String",
-                StringValue = value
-            };
+            RuntimePipelineCustomizerRegistry.Instance.Register(new OpenTelemetrySnsPipelineCustomizer(propagator));
         }
     }
 }
