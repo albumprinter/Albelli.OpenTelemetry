@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Albelli.OpenTelemetry.Core</AssemblyName>
     <RootNamespace>Albelli.OpenTelemetry.Core</RootNamespace>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
@@ -12,6 +12,7 @@
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <Version>0.0.1</Version>
+    <LangVersion>Latest</LangVersion>
   </PropertyGroup>
    
   <ItemGroup>
