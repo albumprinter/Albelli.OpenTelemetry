@@ -22,9 +22,9 @@ namespace Albelli.OpenTelemetry.SNS
                 return;
             }
 
-            //Marshaller handler populates IRequestContext.Request
-            pipeline.AddHandlerAfter<Marshaller>(new OpenTelemetrySnsHttpRequestPipelineHandler(_propagator));
-            pipeline.AddHandler(new OpenTelemetrySnsMessageAttributePipelineHandler(_propagator));
+            //traceparent, tracestate excluded from signed headers
+            pipeline.AddHandlerAfter<Signer>(new OpenTelemetrySnsHttpRequestPipelineHandler(_propagator));
+            pipeline.AddHandlerAfter<Signer>(new OpenTelemetrySnsMessageAttributePipelineHandler(_propagator));
         }
 
         public string UniqueName => nameof(OpenTelemetrySnsPipelineCustomizer);
