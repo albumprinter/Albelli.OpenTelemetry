@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Albelli.OpenTelemetry.Core;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Albelli.OpenTelemetry.AspNetCore
 {
@@ -19,12 +20,14 @@ namespace Albelli.OpenTelemetry.AspNetCore
         private const string HttpRequestInStart = "Microsoft.AspNetCore.Hosting.HttpRequestIn.Start";
         private readonly ActivitySpanId EMPTY_SPAN = ActivitySpanId.CreateFromString("ffffffffffffffff".AsSpan());
         private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+        private readonly ILogger<AlbelliAspNetCoreCorrelationProxy> logger;
 
-        public AlbelliAspNetCoreCorrelationProxy()
+        public AlbelliAspNetCoreCorrelationProxy(ILogger<AlbelliAspNetCoreCorrelationProxy> logger)
         {
             // We want to use the W3C format so we can be compatible with the standard as much as possible.
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
             Activity.ForceDefaultIdFormat = true;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         void IObserver<DiagnosticListener>.OnNext(DiagnosticListener diagnosticListener)
@@ -102,6 +105,7 @@ namespace Albelli.OpenTelemetry.AspNetCore
                 // so while in the older system it was wrong but technically valid, we have to discard it now
                 && correlationId != Guid.Empty)
             {
+                logger.LogInformation($"Found old x-correlationId {correlationId}");
                 id = correlationId;
                 return true;
             }
