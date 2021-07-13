@@ -24,7 +24,7 @@ namespace Albelli.OpenTelemetry.SNS
 
             //traceparent, tracestate excluded from signed headers
             pipeline.AddHandlerAfter<Signer>(new OpenTelemetrySnsHttpRequestPipelineHandler(_propagator));
-            pipeline.AddHandlerAfter<Signer>(new OpenTelemetrySnsMessageAttributePipelineHandler(_propagator));
+            pipeline.AddHandler(new OpenTelemetrySnsMessageAttributePipelineHandler(_propagator));
         }
 
         public string UniqueName => nameof(OpenTelemetrySnsPipelineCustomizer);

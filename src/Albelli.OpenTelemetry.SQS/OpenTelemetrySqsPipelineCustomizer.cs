@@ -24,7 +24,7 @@ namespace Albelli.OpenTelemetry.SQS
 
             //traceparent, tracestate excluded from signed headers
             pipeline.AddHandlerAfter<Signer>(new OpenTelemetrySqsHttpRequestPipelineHandler(_propagator));
-            pipeline.AddHandlerAfter<Signer>(new OpenTelemetrySqsMessageAttributePipelineHandler(_propagator));
+            pipeline.AddHandler(new OpenTelemetrySqsMessageAttributePipelineHandler(_propagator));
         }
 
         public string UniqueName => nameof(OpenTelemetrySqsPipelineCustomizer);
