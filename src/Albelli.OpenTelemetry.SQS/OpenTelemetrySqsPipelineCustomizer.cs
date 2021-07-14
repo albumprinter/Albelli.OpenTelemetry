@@ -22,8 +22,8 @@ namespace Albelli.OpenTelemetry.SQS
                 return;
             }
 
-            //Marshaller handler populates IRequestContext.Request
-            pipeline.AddHandlerAfter<Marshaller>(new OpenTelemetrySqsHttpRequestPipelineHandler(_propagator));
+            //traceparent, tracestate excluded from signed headers
+            pipeline.AddHandlerAfter<Signer>(new OpenTelemetrySqsHttpRequestPipelineHandler(_propagator));
             pipeline.AddHandler(new OpenTelemetrySqsMessageAttributePipelineHandler(_propagator));
         }
 
