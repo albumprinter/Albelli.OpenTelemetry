@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Albelli.OpenTelemetry.Core;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DiagnosticAdapter;
 
 namespace Albelli.OpenTelemetry.AspNetCore
 {
@@ -14,20 +14,19 @@ namespace Albelli.OpenTelemetry.AspNetCore
     /// DiagnosticListener.AllListeners.Subscribe(new AlbelliAspNetCoreCorrelationProxy());
     /// </summary>
     [PublicAPI]
-    public sealed class AlbelliAspNetCoreCorrelationProxy : IObserver<KeyValuePair<string, object>>, IObserver<DiagnosticListener>
+    public sealed class AlbelliAspNetCoreCorrelationProxy : IObserver<DiagnosticListener>, IObserver<KeyValuePair<string, object>>
     {
         private const string DiagnosticListenerName = "Microsoft.AspNetCore";
         private const string HttpRequestInStart = "Microsoft.AspNetCore.Hosting.HttpRequestIn.Start";
+        private const string HttpRequestIn = "Microsoft.AspNetCore.Hosting.HttpRequestIn";
         private readonly ActivitySpanId EMPTY_SPAN = ActivitySpanId.CreateFromString("ffffffffffffffff".AsSpan());
         private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
-        private readonly ILogger<AlbelliAspNetCoreCorrelationProxy> logger;
 
-        public AlbelliAspNetCoreCorrelationProxy(ILogger<AlbelliAspNetCoreCorrelationProxy> logger)
+        public AlbelliAspNetCoreCorrelationProxy()
         {
             // We want to use the W3C format so we can be compatible with the standard as much as possible.
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
             Activity.ForceDefaultIdFormat = true;
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         void IObserver<DiagnosticListener>.OnNext(DiagnosticListener diagnosticListener)
@@ -47,16 +46,20 @@ namespace Albelli.OpenTelemetry.AspNetCore
             _subscriptions.Clear();
         }
 
-        public void OnCompleted() { }
+        void IObserver<KeyValuePair<string, object>>.OnNext(KeyValuePair<string, object> pair) { }
 
-        public void OnError(Exception error) { }
+        void IObserver<KeyValuePair<string, object>>.OnError(Exception error) { }
 
-        private void Start(HttpContext ctx)
+        void IObserver<KeyValuePair<string, object>>.OnCompleted() { }
+
+        [UsedImplicitly]
+        [DiagnosticName(HttpRequestInStart)]
+        public void OnHttpRequestInStart(HttpContext httpContext)
         {
-            if (ctx == null) return;
+            if (httpContext == null) return;
 
             var currentActivity = Activity.Current;
-            var resolvedBackwardsCompatibleId = TryResolveCorrelationId(ctx, out var guidFromOldSystem);
+            var resolvedBackwardsCompatibleId = TryResolveCorrelationId(httpContext, out var guidFromOldSystem);
 
             // We can only manipulate the ids if they are in the W3C format
             if (currentActivity != null && resolvedBackwardsCompatibleId)
@@ -88,12 +91,12 @@ namespace Albelli.OpenTelemetry.AspNetCore
             }
         }
 
-        public void OnNext(KeyValuePair<string, object> value)
+        [DiagnosticName(HttpRequestIn)]
+        public void OnHttpRequestIn()
         {
-            if (string.Equals(value.Key, HttpRequestInStart, StringComparison.OrdinalIgnoreCase))
-            {
-                Start(value.Value as HttpContext);
-            }
+            // Do not do anything with this event. The only reason we are receiving it
+            // Is because the listener won't send any other child events if we are not expecting a parent event
+            // if (s_diagnosticListener.IsEnabled(DiagnosticsHandlerLoggingStrings.ActivityName, request))
         }
 
         private bool TryResolveCorrelationId(HttpContext context, out Guid id)
@@ -105,7 +108,6 @@ namespace Albelli.OpenTelemetry.AspNetCore
                 // so while in the older system it was wrong but technically valid, we have to discard it now
                 && correlationId != Guid.Empty)
             {
-                logger.LogInformation($"Found old x-correlationId {correlationId}");
                 id = correlationId;
                 return true;
             }
